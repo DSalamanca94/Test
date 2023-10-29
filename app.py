@@ -1,38 +1,35 @@
-from flask import Flask, Resourse
-from psycopg2 import DatabaseError
-from decouple import config
-
+from flask import Flask
+from flask_restful import Resource, Api
+from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
+import psycopg2
 
 app = Flask(__name__)
+api = Api(app)
 
-@app.route('/')
+# Configura la conexión a la base de datos con SQLAlchemy
+db_name = 'postgres'
+db_user = 'postgres'
+db_password = 'postgres'
+db_host = '34.82.89.192'
+db_port = '5432'
 
-def get_connection():
-    try:
-        return psycopg2.connect(
-            host=config('34.82.89.192'),
-            port=config('5432'),
-            user=config('postgres'),
-            password=config('postgres'),
-            database=config('postgres')
-        )
-    except DatabaseError as ex:
-        raise ex
+db_string = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
+db = create_engine(db_string)
 
-
-class User(Resourse):
+class User(Resource):
     def post(self):
         try:
-            conn = get_connection()
+            conn = psycopg2.connect(database=db_name, user=db_user, password=db_password, host=db_host, port=db_port)
             cursor = conn.cursor()
-            cursor.execute('INSERT INTO userlogin (username, useremail, userpassword) VALUES (%s, %s, %s)', ('test', 'test', 'test'))
-        except DatabaseError as ex:
-            raise Exception(ex)
+            cursor.execute('INSERT INTO userlogin (username, useremail, userpassword) VALUES (%s, %s, %s)', ('test', 'test2', 'test'))
+            conn.commit()
+            conn.close()
+            return {'message': 'User added successfully'}, 201
+        except SQLAlchemyError as ex:
+            return {'error': str(ex)}, 500
 
-
-
-def hello_world():    
-    return 'Hello, World!'
+api.add_resource(User, '/user')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
