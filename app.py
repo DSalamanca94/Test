@@ -1,17 +1,11 @@
-from Test import create_app
-from flask_restful import Api, Resource
+from flask import Flask
 
-app = create_app('default')
-app_context = app.app_context()
-app_context.push()
+app = Flask(__name__)
 
-api = Api(app)
+@app.route('/')
 
-class HelloWorld(Resource):
-    def get(self):
-        return {'hello': 'world'}
-
-api.add_resource(HelloWorld, '/api/test')
+def hello_world():
+    return 'Hello, World!'
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=80)
+    app.run(host='0.0.0.0', port=80)
