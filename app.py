@@ -17,6 +17,11 @@ db_port = '5432'
 db_string = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
 db = create_engine(db_string)
 
+class Status(Resource):
+    def get(self):
+        return ('Estoy Conectado!!!!')
+
+
 class User(Resource):
     def post(self):
         try:
@@ -30,6 +35,7 @@ class User(Resource):
             return {'error': str(ex)}, 500
 
 api.add_resource(User, '/user')
+api.add_resource(Status, '/status')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=80)
