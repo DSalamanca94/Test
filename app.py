@@ -27,7 +27,7 @@ class User(Resource):
         try:
             conn = psycopg2.connect(database=db_name, user=db_user, password=db_password, host=db_host, port=db_port)
             cursor = conn.cursor()
-            cursor.execute('INSERT INTO userlogin (username, useremail, userpassword) VALUES (%s, %s, %s)', ('test', 'test2', 'test'))
+            cursor.execute('INSERT INTO userlogin (username, useremail, userpassword) VALUES (%s, %s, %s)', ('test', 'test1', 'test'))
             conn.commit()
             conn.close()
             return {'message': 'User added successfully'}, 201
