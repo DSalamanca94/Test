@@ -21,8 +21,8 @@ class CreateFile(Resource):
         archivo_a_copiar = 'Test.txt'
 
         # Rutas completas de origen y destino
-        ruta_origen = 'gs://app-storage-folder/in/{}'.format(archivo_a_copiar)
-        ruta_destino = 'gs://app-storage-folder/out/{}'.format(archivo_a_copiar)
+        ruta_origen = 'gs://app-storage-folder/Input/{}'.format(archivo_a_copiar)
+        ruta_destino = 'gs://app-storage-folder/Output/{}'.format(archivo_a_copiar)
 
         # Copiar el archivo
         try:
@@ -30,11 +30,11 @@ class CreateFile(Resource):
             bucket = storage_client.get_bucket('app-storage-folder')
 
             # Comprobar si el archivo de origen existe
-            blob_origen = bucket.blob('in/{}'.format(archivo_a_copiar))
+            blob_origen = bucket.blob('Input/{}'.format(archivo_a_copiar))
             blob_origen.reload()
 
             # Copiar el archivo
-            blob_origen.copy_to(bucket, 'out/{}'.format(archivo_a_copiar))
+            blob_origen.copy_to(bucket, 'Output/{}'.format(archivo_a_copiar))
 
             return {'status': 'success', 'message': 'Archivo copiado correctamente.'}
         except NotFound:
@@ -42,7 +42,7 @@ class CreateFile(Resource):
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
 
-api.add_resource(CreateFile, '/user')
+api.add_resource(CreateFile, '/CreateFile')
 api.add_resource(Status, '/status')
 
 if __name__ == '__main__':
