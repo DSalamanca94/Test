@@ -41,26 +41,6 @@ class CreateFile(Resource):
             return {'status': 'error', 'message': str(e)}
 
 
-class CheckFile(Resource):
-    def get(self):
-        archivo_a_verificar = 'Test.txt'
-        ruta_verificacion = 'gs://app-storage-folder/Input/{}'.format(archivo_a_verificar)
-
-        try:
-            storage_client = storage.Client()
-
-            # Comprobar si el archivo existe
-            bucket = storage_client.get_bucket('app-storage-folder')
-            blob_verificacion = bucket.blob('Input/{}'.format(archivo_a_verificar))
-
-            if blob_verificacion.exists():
-                return {'status': 'success', 'message': 'El archivo existe en la carpeta Input.'}
-            else:
-                return {'status': 'error', 'message': 'El archivo no existe en la carpeta Input.'}
-        except Exception as e:
-            return {'status': 'error', 'message': str(e)}
-
-api.add_resource(CheckFile, '/CheckFile')
 api.add_resource(CreateFile, '/CreateFile')
 api.add_resource(Status, '/status')
 
