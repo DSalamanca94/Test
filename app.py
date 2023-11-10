@@ -3,8 +3,6 @@ from flask_restful import Resource, Api
 from google.cloud import storage
 from google.cloud.exceptions import NotFound
 
-
-
 app = Flask(__name__)
 api = Api(app)
 
@@ -24,6 +22,7 @@ class CreateFile(Resource):
         ruta_origen = 'gs://app-storage-folder/Input/{}'.format(archivo_a_copiar)
         ruta_destino = 'gs://app-storage-folder/Output/{}'.format(archivo_a_copiar)
 
+        # Copiar el archivo
         try:
             storage_client = storage.Client()
             bucket = storage_client.get_bucket('app-storage-folder')
