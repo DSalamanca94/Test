@@ -18,7 +18,7 @@ class Status(Resource):
 class CreateFile(Resource):
     def post(self):
         # Nombre del archivo que deseas copiar
-        archivo_a_copiar = 'nombre_del_archivo.txt'
+        archivo_a_copiar = 'Test.txt'
 
         # Rutas completas de origen y destino
         ruta_origen = 'gs://app-storage-folder/in/{}'.format(archivo_a_copiar)
