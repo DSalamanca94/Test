@@ -32,8 +32,11 @@ class CreateFile(Resource):
             blob_origen.reload()
 
             # Copiar el archivo
-            # blob_destino = bucket.blob('Output/{}'.format(archivo_a_copiar))
+            blob_destino = bucket.blob('Output/{}'.format(archivo_a_copiar))
+            
             # bucket.copy_blob(blob_origen, blob_destino)
+
+            print (blob_destino)
 
             return {'status': 'success', 'message': blob_origen}
         except NotFound:
@@ -45,4 +48,4 @@ api.add_resource(CreateFile, '/CreateFile')
 api.add_resource(Status, '/status')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=5000)
