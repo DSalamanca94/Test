@@ -1,40 +1,48 @@
 from flask import Flask
 from flask_restful import Resource, Api
-from sqlalchemy import create_engine
-from sqlalchemy.exc import SQLAlchemyError
-import psycopg2
+from google.cloud import storage
+from google.cloud.exceptions import NotFound
+
+
 
 app = Flask(__name__)
 api = Api(app)
 
 # Configura la conexión a la base de datos con SQLAlchemy
-db_name = 'postgres'
-db_user = 'postgres'
-db_password = 'postgres'
-db_host = '34.82.89.192'
-db_port = '5432'
-
-db_string = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
-db = create_engine(db_string)
 
 class Status(Resource):
     def get(self):
         return ('Estoy Conectado!!!!')
 
 
-class User(Resource):
+class CreateFile(Resource):
     def post(self):
-        try:
-            conn = psycopg2.connect(database=db_name, user=db_user, password=db_password, host=db_host, port=db_port)
-            cursor = conn.cursor()
-            cursor.execute('INSERT INTO userlogin (username, useremail, userpassword) VALUES (%s, %s, %s)', ('test', 'test1', 'test'))
-            conn.commit()
-            conn.close()
-            return {'message': 'User added successfully'}, 201
-        except SQLAlchemyError as ex:
-            return {'error': str(ex)}, 500
+        # Nombre del archivo que deseas copiar
+        archivo_a_copiar = 'nombre_del_archivo.txt'
 
-api.add_resource(User, '/user')
+        # Rutas completas de origen y destino
+        ruta_origen = 'gs://app-storage-folder/in/{}'.format(archivo_a_copiar)
+        ruta_destino = 'gs://app-storage-folder/out/{}'.format(archivo_a_copiar)
+
+        # Copiar el archivo
+        try:
+            storage_client = storage.Client()
+            bucket = storage_client.get_bucket('app-storage-folder')
+
+            # Comprobar si el archivo de origen existe
+            blob_origen = bucket.blob('in/{}'.format(archivo_a_copiar))
+            blob_origen.reload()
+
+            # Copiar el archivo
+            blob_origen.copy_to(bucket, 'out/{}'.format(archivo_a_copiar))
+
+            return {'status': 'success', 'message': 'Archivo copiado correctamente.'}
+        except NotFound:
+            return {'status': 'error', 'message': 'El archivo de origen no existe.'}
+        except Exception as e:
+            return {'status': 'error', 'message': str(e)}
+
+api.add_resource(CreateFile, '/user')
 api.add_resource(Status, '/status')
 
 if __name__ == '__main__':
