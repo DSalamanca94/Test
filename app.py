@@ -15,31 +15,31 @@ class Status(Resource):
 
 class CreateFile(Resource):
     def post(self):
-        # Nombre del archivo que deseas copiar
         archivo_a_copiar = 'Test.txt'
-
-        # Rutas completas de origen y destino
         ruta_origen = 'gs://app-storage-folder/Input/{}'.format(archivo_a_copiar)
         ruta_destino = 'gs://app-storage-folder/Output/{}'.format(archivo_a_copiar)
 
-        # Copiar el archivo
         try:
+            # Utiliza las credenciales predeterminadas proporcionadas por la instancia de VM
             storage_client = storage.Client()
-            bucket = storage_client.get_bucket('app-storage-folder')
 
             # Comprobar si el archivo de origen existe
+            bucket = storage_client.get_bucket('app-storage-folder')
             blob_origen = bucket.blob('Input/{}'.format(archivo_a_copiar))
-            blob_origen.reload()
+
+            if not blob_origen.exists():
+                return {'status': 'error', 'message': 'El archivo de origen no existe en el bucket de origen.'}
 
             # Copiar el archivo
             blob_destino = bucket.blob('Output/{}'.format(archivo_a_copiar))
-            bucket.copy_blob(blob_origen, blob_destino)
+            bucket.copy_blob(blob_origen, bucket, blob_destino.name)
 
-            return {'status': 'success', 'message': 'El archivo se copió correctamente.'}
-        #except NotFound:
-            #return {'status': 'error', 'message': 'El archivo de origen no existe.'}
+            return {'status': 'success', 'message': 'Archivo copiado correctamente.'}
+        except NotFound:
+            return {'status': 'error', 'message': 'El archivo de origen no existe.'}
         except Exception as e:
             return {'status': 'error', 'message': str(e)}
+
 
 class CheckFile(Resource):
     def get(self):
