@@ -34,7 +34,7 @@ class CreateFile(Resource):
             blob_origen.reload()
 
             # Copiar el archivo
-            blob_origen.copy_to(bucket, 'Output/{}'.format(archivo_a_copiar))
+            #blob_origen.copy_to(bucket, 'Output/{}'.format(archivo_a_copiar))
 
             return {'status': 'success', 'message': 'Archivo copiado correctamente.'}
         except NotFound:
