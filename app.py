@@ -35,7 +35,7 @@ class CreateFile(Resource):
             # blob_destino = bucket.blob('Output/{}'.format(archivo_a_copiar))
             # bucket.copy_blob(blob_origen, blob_destino)
 
-            return {'status': 'success', 'message': 'Archivo copiado correctamente.'}
+            return {'status': 'success', 'message': blob_origen}
         except NotFound:
             return {'status': 'error', 'message': 'El archivo de origen no existe.'}
         except Exception as e:
